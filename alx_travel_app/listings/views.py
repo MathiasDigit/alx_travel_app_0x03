@@ -8,6 +8,7 @@ from .serializers import ListingsSerializer, BookingSerializer
 from django.conf import settings
 from django.http import HttpResponse
 from django.views import View
+from .task import send_booking_confirmation_email
 
 # Create your views here.
 class ListingViewSet(viewsets.ModelViewSet):
@@ -17,6 +18,12 @@ class ListingViewSet(viewsets.ModelViewSet):
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+
+    def perform_create(self, serializer):
+        booking = serializer.save()
+        user_email = booking.user.email
+        listing_title = booking.listing.title
+        send_booking_confirmation_email.delay(user_email, listing_title)
 
 class ChapaPaymentInitView(APIView):
     def post(self, request, booking_id):
@@ -82,18 +89,18 @@ class ChapaPaymentInitView(APIView):
             return Response({"error": "Failed to initiate payment"}, status=500)
 
 class ChapaVerifyPaymentView(APIView):
-    def get(self, requests, tx_ref):
+    def get(self, request, tx_ref):
         url = f"https://api.chapa.co/v1/transaction/verify/{tx_ref}"
         headers = {"Authorization": f"Bearer {settings.CHAPA_SECRET_KEY}"}
 
-        response = requests.get(url, headers=headers)
+        response = http_requests.get(url, headers=headers)
         if response.status_code == 200:
             data = response.json().get("data")
             if data["status"] == "success":
                 try:
-                    Payment = Payment.objects.get(chapa_tx_ref=tx_ref)
-                    Payment.status = "Completed"
-                    Payment.save()
+                    payment = Payment.objects.get(chapa_tx_ref=tx_ref)
+                    payment.status = "Completed"
+                    payment.save()
                     return Response({"message": "Payment successful"})
                 except Payment.DoesNotExist:
                     return Response({"error": "Transaction not found"}, status=404)
@@ -102,6 +109,6 @@ class ChapaVerifyPaymentView(APIView):
         return Response({"error": "Verification failed"}, status=500)
 
 
-class PaymentSuccessView(View):
+class paymentSuccessView(View):
     def get(self, request):
         return HttpResponse("Paiement réussi ! Merci pour votre réservation.")

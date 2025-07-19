@@ -28,7 +28,7 @@ class Booking(models.Model):
     property = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='bookings')
     user = models.ForeignKey(user, on_delete=models.CASCADE)
     start_date = models.DateField()
-    end_date = models.DateField
+    end_date = models.DateField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     created_at = models.DateField(auto_now_add=True)
@@ -49,14 +49,14 @@ class Review(models.Model):
         return f"review {self.review_id}"
     
 class Payment(models.Model):
+     payment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
      booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
      amount = models.DecimalField(max_digits=10, decimal_places=2)
      status = models.CharField(max_length=20, default='Pending')
      chapa_tx_ref = models.CharField(max_length=100, blank=True, null=True)
      chapa_checkout_url = models.URLField(blank=True, null=True)
      created_at = models.DateTimeField(auto_now_add=True)
-     created_at = models.DateTimeField(auto_now_add=True)
-
+     
      def __str__(self):
-        return f"{self.booking.id} - {self.status}"
+        return f"{self.booking.booking_id} - {self.status}"
 
