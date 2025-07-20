@@ -25,7 +25,7 @@ class Booking(models.Model):
     ]
 
     booking_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    property = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='bookings')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='bookings')
     user = models.ForeignKey(user, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()

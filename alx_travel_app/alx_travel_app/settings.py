@@ -30,7 +30,8 @@ SECRET_KEY = 'django-insecure-%xa4fs3ed6bg1o^7*5=%f&pc=gqnou(adkt$t83-pe%(pitvw*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["CloneAirbnb.onrender.com", 'localhost']
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Application definition

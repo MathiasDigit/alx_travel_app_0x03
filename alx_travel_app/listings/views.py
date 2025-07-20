@@ -8,7 +8,7 @@ from .serializers import ListingsSerializer, BookingSerializer
 from django.conf import settings
 from django.http import HttpResponse
 from django.views import View
-from .task import send_booking_confirmation_email
+from .tasks import send_booking_confirmation_email
 
 # Create your views here.
 class ListingViewSet(viewsets.ModelViewSet):
