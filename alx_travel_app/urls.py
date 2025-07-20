@@ -19,7 +19,10 @@ from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.http import HttpResponse
 
+def home_view(request):
+    return HttpResponse("Welcome to the ALX Travel API 🚀")
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -31,6 +34,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 urlpatterns = [
+    path('', home_view),
     path('admin/', admin.site.urls),
     path('api/', include('listings.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
