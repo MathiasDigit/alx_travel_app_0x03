@@ -3,7 +3,7 @@ services:
     name: alx-travel-api
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn alx_travel_app.alx_travel_app.wsgi:application
+    startCommand: gunicorn alx_travel_app.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
         value: 'fu(lwa7sgs=0uy+ga&hx9n8gz8)(%hb@iif(yd06)ks7uc&b!g'
